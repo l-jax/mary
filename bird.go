@@ -43,6 +43,10 @@ func (b *bird) move() {
 		b.y--
 	}
 
+	b.wrap()
+}
+
+func (b *bird) wrap() {
 	if b.y < 0 {
 		b.y = height - 1
 	}
