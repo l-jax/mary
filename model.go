@@ -6,34 +6,18 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
+const (
+	width  = 40
+	height = 20
+)
+
 type model struct {
-	grid [][]bird
+	flock flock
 }
 
 func newModel() model {
-	text := []string{
-		"Chunky and noisy,",
-		"but with stars in their black feathers,",
-		"they spring from the telephone wire",
-		"and instantly",
-	}
-
-	grid := make([][]bird, len(text))
-	for i := range grid {
-		grid[i] = make([]bird, len(text[i]))
-		for j := range grid[i] {
-			grid[i][j] = bird{
-				char:  rune(text[i][j]),
-				x:     j,
-				y:     i,
-				speed: 1,
-				dir:   direction(rand.Intn(7)),
-			}
-		}
-	}
-
 	return model{
-		grid: grid,
+		flock: newFlock(),
 	}
 
 }
@@ -43,17 +27,37 @@ func (m model) Init() tea.Cmd {
 }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	switch msg := msg.(type) {
+	case tea.KeyMsg:
+		if msg.String() == "q" {
+			return m, tea.Quit
+		}
+
+		if msg.String() == "p" {
+			for i := range m.flock.birds {
+				m.flock.birds[i].dir = direction((rand.Intn(8)))
+				m.flock.birds[i].move()
+			}
+		}
+	}
+
 	return m, nil
 }
 
 func (m model) View() string {
 	var output string
-	for _, row := range m.grid {
-		for _, b := range row {
-			if b.char == ' ' {
+	for i := range height {
+		for j := range width {
+			birdFound := false
+			for _, b := range m.flock.birds {
+				if b.x == j && b.y == i {
+					output += string(b.char)
+					birdFound = true
+					break
+				}
+			}
+			if !birdFound {
 				output += " "
-			} else {
-				output += string(b.char)
 			}
 		}
 		output += "\n"
