@@ -30,6 +30,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if msg.String() == "q" {
 			return m, tea.Quit
 		}
+
+		if msg.String() == "p" {
+			m.flock.moveBirds()
+		}
 	}
 
 	return m, nil
