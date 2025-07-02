@@ -1,5 +1,7 @@
 package main
 
+import "math/rand"
+
 var text = []string{
 	"Chunky and noisy,",
 	"but with stars in their black feathers,",
@@ -8,16 +10,20 @@ var text = []string{
 }
 
 type flock struct {
-	birds []bird
+	birds [height][width]*bird
 }
 
 func newFlock() flock {
-	birds := make([]bird, 200)
-	count := 0
-	for i, line := range text {
-		for j, char := range line {
-			birds[count] = bird{char: char, x: j, y: i}
-			count++
+	birds := [height][width]*bird{}
+	for i := range text {
+		for j := range text[i] {
+			if text[i][j] == ' ' {
+				continue
+			}
+			birds[i][j] = &bird{
+				char: rune(text[i][j]),
+				dir:  direction(rand.Intn(8)),
+			}
 		}
 	}
 	return flock{
