@@ -75,21 +75,24 @@ func (b *bird) steer(neighbors []*bird) {
 		return
 	}
 
-	if x < 0 && y < 0 {
+	dx := x - b.x
+	dy := y - b.y
+
+	if dx < 0 && dy < 0 {
 		b.dir = northWest
-	} else if x < 0 && y > 0 {
+	} else if dx < 0 && dy > 0 {
 		b.dir = northEast
-	} else if x > 0 && y < 0 {
+	} else if dx > 0 && dy < 0 {
 		b.dir = southWest
-	} else if x > 0 && y > 0 {
+	} else if dx > 0 && dy > 0 {
 		b.dir = southEast
-	} else if x < 0 {
+	} else if dx < 0 {
 		b.dir = north
-	} else if x > 0 {
+	} else if dx > 0 {
 		b.dir = south
-	} else if y < 0 {
+	} else if dy < 0 {
 		b.dir = west
-	} else if y > 0 {
+	} else if dy > 0 {
 		b.dir = east
 	}
 }

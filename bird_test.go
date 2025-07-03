@@ -81,3 +81,20 @@ func TestNearWillWrap(t *testing.T) {
 		t.Errorf("Expected A not to be near C")
 	}
 }
+
+func TestSteer(t *testing.T) {
+	/*
+		- A -
+		B - C
+	*/
+
+	birdA := &bird{char: 'A', x: 0, y: 1, dir: east}
+	birdB := &bird{char: 'B', x: 1, y: 0}
+	birdC := &bird{char: 'C', x: 1, y: 2}
+
+	birdA.steer([]*bird{birdB, birdC})
+
+	if birdA.dir != south {
+		t.Errorf("Expected A to steer south towards B and C, got %v", birdA.dir)
+	}
+}

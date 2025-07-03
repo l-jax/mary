@@ -33,6 +33,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		if msg.String() == "p" {
 			m.flock.move()
+			m.flock.steer()
 		}
 	}
 
@@ -41,16 +42,21 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m model) View() string {
 	var output string
-	// for i := range height {
-	// 	for j := range width {
-	// 		birdMaybe := m.flock.birds[i][j]
-	// 		if birdMaybe == nil {
-	// 			output += " "
-	// 			continue
-	// 		}
-	// 		output += string(birdMaybe.char)
-	// 	}
-	// 	output += "\n"
-	// }
+	for i := range height {
+		for j := range width {
+			found := false
+			for _, bird := range m.flock.birds {
+				if bird.x == i && bird.y == j {
+					output += string(bird.char)
+					found = true
+					break
+				}
+			}
+			if !found {
+				output += " "
+			}
+		}
+		output += "\n"
+	}
 	return output
 }
