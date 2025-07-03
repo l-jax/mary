@@ -29,85 +29,58 @@ var text = []string{
 }
 
 type flock struct {
-	birds [height][width]*bird
+	birds []*bird
 }
 
 func newFlock() flock {
-	birds := [height][width]*bird{}
-	for i := range text {
-		for j := range text[i] {
-			if text[i][j] == ' ' {
+	birds := make([]*bird, 0, 200)
+	for i, line := range text {
+		for j, char := range line {
+			if char == ' ' || char == '\n' {
 				continue
 			}
-			birds[i][j] = &bird{
-				char: rune(text[i][j]),
-				dir:  direction(rand.Intn(8)),
+
+			// randomly assign a direction
+			dir := direction(rand.Intn(8))
+
+			// create a new bird
+			b := &bird{
+				char: char,
+				x:    i,
+				y:    j,
+				dir:  dir,
 			}
+
+			birds = append(birds, b)
 		}
 	}
+
 	return flock{
 		birds: birds,
 	}
 }
 
-func (f *flock) moveBirds() {
-	birds := [height][width]*bird{}
-	for i := range f.birds {
-		for j := range f.birds[i] {
-			bird := f.birds[i][j]
+func (f *flock) move() {
+	for _, bird := range f.birds {
+		bird.move()
+	}
+}
 
-			if bird == nil {
+func (f *flock) steer() {
+	for i := range f.birds {
+		nearbyBirds := make([]*bird, 0, 8)
+		for j := range f.birds {
+			if i == j {
 				continue
 			}
-
-			x, y := findNewPosition(i, j, bird)
-			birds[x][y] = bird
+			if f.birds[i].isNear(f.birds[j]) {
+				nearbyBirds = append(nearbyBirds, f.birds[j])
+			}
 		}
-	}
-	f.birds = birds
-}
 
-func findNewPosition(i int, j int, bird *bird) (int, int) {
-	x := i
-	y := j
-	switch bird.dir {
-	case north:
-		x--
-	case northEast:
-		x--
-		y++
-	case east:
-		y++
-	case southEast:
-		x++
-		y++
-	case south:
-		x++
-	case southWest:
-		x++
-		y--
-	case west:
-		y--
-	case northWest:
-		x--
-		y--
-	}
-
-	wrap(&x, &y)
-
-	return x, y
-}
-
-func wrap(x *int, y *int) {
-	if *x < 0 {
-		*x = height - 1
-	} else if *x >= height {
-		*x = 0
-	}
-
-	if *y < 0 {
-		*y = width - 1
-	} else if *y >= width {
-		*y = 0
+		if len(nearbyBirds) == 0 {
+			continue
+		}
+		f.birds[i].steer(nearbyBirds)
 	}
 }

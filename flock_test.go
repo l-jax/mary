@@ -3,15 +3,15 @@ package main
 import "testing"
 
 func TestMoveBirds(t *testing.T) {
-	birds := [height][width]*bird{}
-	birds[0][0] = &bird{char: 'A', dir: east}
+	birds := []*bird{
+		{char: 'A', dir: east, x: 0, y: 0},
+	}
 
 	flock := flock{birds: birds}
 
-	flock.moveBirds()
+	flock.move()
 
-	if flock.birds[0][1] == nil {
-		t.Errorf("Bird did not move: %v", flock.birds)
+	if flock.birds[0].x != 0 || flock.birds[0].y != 1 {
+		t.Errorf("Expected bird to move to (0, 1), got (%d, %d)", flock.birds[0].x, flock.birds[0].y)
 	}
-
 }
