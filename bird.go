@@ -1,103 +1,33 @@
 package main
 
-import "math"
+import (
+	"math"
+)
 
 const nearbyDistance = 1
 
-type direction uint
-
-const (
-	north direction = iota
-	northEast
-	east
-	southEast
-	south
-	southWest
-	west
-	northWest
-)
+type vector struct {
+	x, y int
+}
 
 type bird struct {
-	char rune
-	x, y int
-	dir  direction
+	char     rune
+	position vector
+	velocity vector
 }
 
 func (b *bird) isNear(other *bird) bool {
-	dx := math.Abs(float64(b.x - other.x))
-	dy := math.Abs(float64(b.y - other.y))
-
-	return (dx <= nearbyDistance || dx >= height-nearbyDistance) &&
-		(dy <= nearbyDistance || dy >= width-nearbyDistance)
+	distance := math.Sqrt(math.Pow(float64(b.position.x-b.position.y), 2) + math.Pow(float64(b.position.y-other.position.y), 2))
+	return distance <= nearbyDistance
 }
 
 func (b *bird) move() {
-	x := b.x
-	y := b.y
-	switch b.dir {
-	case north:
-		x--
-	case northEast:
-		x--
-		y++
-	case east:
-		y++
-	case southEast:
-		x++
-		y++
-	case south:
-		x++
-	case southWest:
-		x++
-		y--
-	case west:
-		y--
-	case northWest:
-		x--
-		y--
-	}
-
-	b.x, b.y = wrap(x, y)
+	x := b.position.x + b.velocity.x
+	y := b.position.y + b.velocity.y
+	b.position = wrap(x, y)
 }
 
-func (b *bird) steer(neighbors []*bird) {
-	count := len(neighbors)
-
-	var x, y int
-	for _, neighbor := range neighbors {
-		x += neighbor.x
-		y += neighbor.y
-	}
-	x /= count
-	y /= count
-
-	if x == 0 && y == 0 {
-		return
-	}
-
-	dx := x - b.x
-	dy := y - b.y
-
-	if dx < 0 && dy < 0 {
-		b.dir = northWest
-	} else if dx < 0 && dy > 0 {
-		b.dir = northEast
-	} else if dx > 0 && dy < 0 {
-		b.dir = southWest
-	} else if dx > 0 && dy > 0 {
-		b.dir = southEast
-	} else if dx < 0 {
-		b.dir = north
-	} else if dx > 0 {
-		b.dir = south
-	} else if dy < 0 {
-		b.dir = west
-	} else if dy > 0 {
-		b.dir = east
-	}
-}
-
-func wrap(x, y int) (int, int) {
+func wrap(x, y int) vector {
 	if x < 0 {
 		x = height - 1
 	}
@@ -110,5 +40,5 @@ func wrap(x, y int) (int, int) {
 	if y >= width {
 		y = 0
 	}
-	return x, y
+	return vector{x: x, y: y}
 }

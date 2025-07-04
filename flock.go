@@ -40,15 +40,16 @@ func newFlock() flock {
 				continue
 			}
 
-			// randomly assign a direction
-			dir := direction(rand.Intn(8))
-
-			// create a new bird
 			b := &bird{
 				char: char,
-				x:    i,
-				y:    j,
-				dir:  dir,
+				position: vector{
+					x: i,
+					y: j,
+				},
+				velocity: vector{
+					x: rand.Intn(3) - 1,
+					y: rand.Intn(3) - 1,
+				},
 			}
 
 			birds = append(birds, b)
@@ -63,24 +64,5 @@ func newFlock() flock {
 func (f *flock) move() {
 	for _, bird := range f.birds {
 		bird.move()
-	}
-}
-
-func (f *flock) steer() {
-	for i := range f.birds {
-		nearbyBirds := make([]*bird, 0, 8)
-		for j := range f.birds {
-			if i == j {
-				continue
-			}
-			if f.birds[i].isNear(f.birds[j]) {
-				nearbyBirds = append(nearbyBirds, f.birds[j])
-			}
-		}
-
-		if len(nearbyBirds) == 0 {
-			continue
-		}
-		f.birds[i].steer(nearbyBirds)
 	}
 }
