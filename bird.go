@@ -24,21 +24,22 @@ func (b *bird) isNear(other *bird) bool {
 func (b *bird) move() {
 	x := b.position.x + b.velocity.x
 	y := b.position.y + b.velocity.y
-	b.position = wrap(x, y)
-}
 
-func wrap(x, y int) vector {
 	if x < 0 {
-		x = height - 1
-	}
-	if x >= height {
 		x = 0
+		b.velocity.x = -b.velocity.x
+	} else if x >= height {
+		x = height - 1
+		b.velocity.x = -b.velocity.x
 	}
+
 	if y < 0 {
-		y = width - 1
-	}
-	if y >= width {
 		y = 0
+		b.velocity.y = -b.velocity.y
+	} else if y >= width {
+		y = width - 1
+		b.velocity.y = -b.velocity.y
 	}
-	return vector{x: x, y: y}
+
+	b.position = vector{x: x, y: y}
 }

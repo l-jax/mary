@@ -30,23 +30,23 @@ func TestMove(t *testing.T) {
 }
 
 var moveWrapTests = map[string]struct {
-	start    vector
+	position vector
 	end      vector
-	velocity vector
+	start    vector
 }{
-	"up":    {start: vector{0, 0}, end: vector{height - 1, 0}, velocity: vector{-1, 0}},
-	"down":  {start: vector{height - 1, 0}, end: vector{0, 0}, velocity: vector{1, 0}},
-	"left":  {start: vector{0, 0}, end: vector{0, width - 1}, velocity: vector{0, -1}},
-	"right": {start: vector{0, width - 1}, end: vector{0, 0}, velocity: vector{0, 1}},
+	"up":    {position: vector{0, 0}, start: vector{-1, 0}, end: vector{1, 0}},
+	"down":  {position: vector{height - 1, 0}, start: vector{1, 0}, end: vector{-1, 0}},
+	"left":  {position: vector{0, 0}, start: vector{0, -1}, end: vector{0, 1}},
+	"right": {position: vector{0, width - 1}, start: vector{0, 1}, end: vector{0, -1}},
 }
 
-func TestMoveWillWrap(t *testing.T) {
+func TestMoveWillReverseAtEdges(t *testing.T) {
 	for name, test := range moveWrapTests {
 		t.Run(name, func(t *testing.T) {
-			bird := &bird{char: 'A', position: test.start, velocity: test.velocity}
+			bird := &bird{char: 'A', position: test.position, velocity: test.start}
 			bird.move()
-			if bird.position != test.end {
-				t.Errorf("Expected bird to wrap to (%v), got (%v)", test.end, bird.position)
+			if bird.velocity != test.end {
+				t.Errorf("Expected bird to reverse (%v), got (%v)", test.end, bird.velocity)
 			}
 		})
 	}
@@ -56,20 +56,6 @@ func TestNear(t *testing.T) {
 	birdA := &bird{char: 'A', position: vector{x: 0, y: 0}}
 	birdB := &bird{char: 'B', position: vector{x: 0, y: nearbyDistance}}
 	birdC := &bird{char: 'C', position: vector{x: 0, y: nearbyDistance + 1}}
-
-	if !birdA.isNear(birdB) {
-		t.Errorf("Expected A to be near B")
-	}
-
-	if birdA.isNear(birdC) {
-		t.Errorf("Expected A not to be near C")
-	}
-}
-
-func TestNearWillWrap(t *testing.T) {
-	birdA := &bird{char: 'A', position: vector{x: 0, y: 0}}
-	birdB := &bird{char: 'B', position: vector{x: height - nearbyDistance, y: 0}}
-	birdC := &bird{char: 'C', position: vector{x: 0, y: width - nearbyDistance}}
 
 	if !birdA.isNear(birdB) {
 		t.Errorf("Expected A to be near B")
