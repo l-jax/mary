@@ -1,12 +1,13 @@
 package main
 
 const (
-	alignmentDistance    = 4
-	separationDistance   = 2
-	maxSpeed             = 1
+	edge                 = 10
+	near                 = 30
+	tooClose             = 2.5
 	cohesionMultiplier   = 0.03
 	separationMultiplier = 0.03
-	alignmentMultiplier  = 0.03
+	alignmentMultiplier  = 0.01
+	maxSpeed             = 4.0
 )
 
 type bird struct {
@@ -16,28 +17,61 @@ type bird struct {
 }
 
 func (b *bird) move() {
-	position := b.position.add(b.velocity)
-
-	if position.x < 0 {
-		position.x = height - 1
-	} else if position.x >= height {
-		position.x = 0
-	}
-
-	if position.y < 0 {
-		position.y = width - 1
-	} else if position.y >= width {
-		position.y = 0
-	}
-
-	b.position = position
+	b.position.add(b.velocity)
 }
 
-func (b *bird) newThing(others []*bird) {
-	var avgVelocity vector
-	var avgPosition vector
-	var avgSeparation vector
-	nearbyCount := 0
+func (b *bird) turn(others []*bird) {
+	b.cohesion(others)
+	b.separation(others)
+	b.alignment(others)
+	b.turnAwayFromEdge()
+	b.limitSpeed()
+}
+
+func (b *bird) cohesion(others []*bird) {
+	var sum vector
+	count := 0
+	for _, other := range others {
+		if other == b {
+			continue
+		}
+
+		distance := b.position.distance(other.position)
+
+		if distance < near {
+			sum.add(other.position)
+			count++
+		}
+	}
+
+	sum.divide(float64(count))
+	sum.subtract(b.position)
+	sum.multiply(cohesionMultiplier)
+	b.velocity.add(sum)
+}
+
+func (b *bird) separation(others []*bird) {
+	var sum vector
+	for _, other := range others {
+		if other == b {
+			continue
+		}
+
+		distance := b.position.distance(other.position)
+
+		if distance < tooClose {
+			difference := b.position.difference(other.position)
+			sum.add(difference)
+		}
+	}
+
+	sum.multiply(separationMultiplier)
+	b.velocity.add(sum)
+}
+
+func (b *bird) alignment(others []*bird) {
+	var sum vector
+	count := 0
 
 	for _, other := range others {
 		if other == b {
@@ -46,44 +80,41 @@ func (b *bird) newThing(others []*bird) {
 
 		distance := b.position.distance(other.position)
 
-		if distance < alignmentDistance {
-			avgVelocity.add(other.velocity)
-			avgPosition.add(other.position)
-
-			if distance < separationDistance {
-				diff := b.position.difference(other.position)
-				avgSeparation.add(diff)
-			}
-			nearbyCount++
+		if distance < near {
+			sum.add(other.velocity)
+			count++
 		}
 	}
 
-	if nearbyCount == 0 {
+	if count == 0 {
 		return
 	}
 
-	avgVelocity.divide(float64(nearbyCount))
-	avgPosition.divide(float64(nearbyCount))
-	avgSeparation.divide(float64(nearbyCount))
+	sum.divide(float64(count))
+	difference := b.velocity.difference(sum)
+	difference.multiply(alignmentMultiplier)
+	b.velocity.add(difference)
+}
 
-	avgVelocity.multiply(alignmentMultiplier)
-	avgPosition.multiply(cohesionMultiplier)
-	avgSeparation.multiply(separationMultiplier)
+func (b *bird) turnAwayFromEdge() {
+	if b.position.x < edge {
+		b.velocity.x += 1
+	}
+	if b.position.x > height-edge {
+		b.velocity.x -= 1
+	}
+	if b.position.y < edge {
+		b.velocity.y += 1
+	}
+	if b.position.y > width-edge {
+		b.velocity.y -= 1
+	}
+}
 
-	b.velocity.add(avgVelocity)
-	b.velocity.add(avgPosition)
-	b.velocity.subtract(avgSeparation)
-
-	if b.velocity.x > maxSpeed {
-		b.velocity.x = maxSpeed
-	}
-	if b.velocity.y > maxSpeed {
-		b.velocity.y = maxSpeed
-	}
-	if b.velocity.x < -maxSpeed {
-		b.velocity.x = -maxSpeed
-	}
-	if b.velocity.y < -maxSpeed {
-		b.velocity.y = -maxSpeed
+func (b *bird) limitSpeed() {
+	speed := b.velocity.distance(vector{})
+	if speed > maxSpeed {
+		b.velocity.divide(speed)
+		b.velocity.multiply(maxSpeed)
 	}
 }

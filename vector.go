@@ -14,32 +14,32 @@ func (v *vector) yInt() int {
 	return int(v.y)
 }
 
-func (v *vector) add(other vector) vector {
-	return vector{
-		x: v.x + other.x,
-		y: v.y + other.y,
-	}
+func (v *vector) add(other vector) {
+	v.x += other.x
+	v.y += other.y
+
 }
 
-func (v *vector) subtract(other vector) vector {
-	return vector{
-		x: v.x - other.x,
-		y: v.y - other.y,
-	}
+func (v *vector) subtract(other vector) {
+	v.x -= other.x
+	v.y -= other.y
 }
 
-func (v *vector) divide(i float64) vector {
-	return vector{
-		x: v.x / i,
-		y: v.y / i,
+func (v *vector) divide(i float64) {
+	if i == 0 {
+		return
 	}
+	v.x /= i
+	v.y /= i
 }
 
-func (v *vector) multiply(i float64) vector {
-	return vector{
-		x: v.x * i,
-		y: v.y * i,
+func (v *vector) multiply(i float64) {
+	if i == 0 {
+		return
 	}
+	v.x *= i
+	v.y *= i
+
 }
 
 func (v *vector) distance(other vector) float64 {
@@ -47,8 +47,5 @@ func (v *vector) distance(other vector) float64 {
 }
 
 func (v *vector) difference(other vector) vector {
-	return vector{
-		x: v.x - other.x,
-		y: v.y - other.y,
-	}
+	return vector{x: v.x - other.x, y: v.y - other.y}
 }

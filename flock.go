@@ -63,7 +63,7 @@ func newFlock() flock {
 
 func (f *flock) move() {
 	for _, bird := range f.birds {
-		bird.newThing(f.birds)
+		bird.turn(f.birds)
 		bird.move()
 	}
 }
