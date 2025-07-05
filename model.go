@@ -5,8 +5,8 @@ import (
 )
 
 const (
-	width  = 50
-	height = 20
+	width  = 80
+	height = 30
 )
 
 type model struct {
@@ -45,7 +45,7 @@ func (m model) View() string {
 		for j := range width {
 			found := false
 			for _, bird := range m.flock.birds {
-				if bird.position.x == i && bird.position.y == j {
+				if bird.position.xInt() == i && bird.position.yInt() == j {
 					output += string(bird.char)
 					found = true
 					break

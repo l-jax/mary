@@ -43,12 +43,12 @@ func newFlock() flock {
 			b := &bird{
 				char: char,
 				position: vector{
-					x: i,
-					y: j,
+					x: float64(i),
+					y: float64(j),
 				},
 				velocity: vector{
-					x: rand.Intn(3) - 1,
-					y: rand.Intn(3) - 1,
+					x: rand.Float64()*2 - 1,
+					y: rand.Float64()*2 - 1,
 				},
 			}
 
@@ -63,6 +63,7 @@ func newFlock() flock {
 
 func (f *flock) move() {
 	for _, bird := range f.birds {
+		bird.newThing(f.birds)
 		bird.move()
 	}
 }

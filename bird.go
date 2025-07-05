@@ -1,14 +1,13 @@
 package main
 
-import (
-	"math"
+const (
+	alignmentDistance    = 4
+	separationDistance   = 2
+	maxSpeed             = 1
+	cohesionMultiplier   = 0.03
+	separationMultiplier = 0.03
+	alignmentMultiplier  = 0.03
 )
-
-const nearbyDistance = 1
-
-type vector struct {
-	x, y int
-}
 
 type bird struct {
 	char     rune
@@ -16,30 +15,75 @@ type bird struct {
 	velocity vector
 }
 
-func (b *bird) isNear(other *bird) bool {
-	distance := math.Sqrt(math.Pow(float64(b.position.x-b.position.y), 2) + math.Pow(float64(b.position.y-other.position.y), 2))
-	return distance <= nearbyDistance
+func (b *bird) move() {
+	position := b.position.add(b.velocity)
+
+	if position.x < 0 {
+		position.x = height - 1
+	} else if position.x >= height {
+		position.x = 0
+	}
+
+	if position.y < 0 {
+		position.y = width - 1
+	} else if position.y >= width {
+		position.y = 0
+	}
+
+	b.position = position
 }
 
-func (b *bird) move() {
-	x := b.position.x + b.velocity.x
-	y := b.position.y + b.velocity.y
+func (b *bird) newThing(others []*bird) {
+	var avgVelocity vector
+	var avgPosition vector
+	var avgSeparation vector
+	nearbyCount := 0
 
-	if x < 0 {
-		x = 0
-		b.velocity.x = -b.velocity.x
-	} else if x >= height {
-		x = height - 1
-		b.velocity.x = -b.velocity.x
+	for _, other := range others {
+		if other == b {
+			continue
+		}
+
+		distance := b.position.distance(other.position)
+
+		if distance < alignmentDistance {
+			avgVelocity.add(other.velocity)
+			avgPosition.add(other.position)
+
+			if distance < separationDistance {
+				diff := b.position.difference(other.position)
+				avgSeparation.add(diff)
+			}
+			nearbyCount++
+		}
 	}
 
-	if y < 0 {
-		y = 0
-		b.velocity.y = -b.velocity.y
-	} else if y >= width {
-		y = width - 1
-		b.velocity.y = -b.velocity.y
+	if nearbyCount == 0 {
+		return
 	}
 
-	b.position = vector{x: x, y: y}
+	avgVelocity.divide(float64(nearbyCount))
+	avgPosition.divide(float64(nearbyCount))
+	avgSeparation.divide(float64(nearbyCount))
+
+	avgVelocity.multiply(alignmentMultiplier)
+	avgPosition.multiply(cohesionMultiplier)
+	avgSeparation.multiply(separationMultiplier)
+
+	b.velocity.add(avgVelocity)
+	b.velocity.add(avgPosition)
+	b.velocity.subtract(avgSeparation)
+
+	if b.velocity.x > maxSpeed {
+		b.velocity.x = maxSpeed
+	}
+	if b.velocity.y > maxSpeed {
+		b.velocity.y = maxSpeed
+	}
+	if b.velocity.x < -maxSpeed {
+		b.velocity.x = -maxSpeed
+	}
+	if b.velocity.y < -maxSpeed {
+		b.velocity.y = -maxSpeed
+	}
 }
