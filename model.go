@@ -3,6 +3,8 @@ package main
 import (
 	"time"
 
+	"github.com/charmbracelet/bubbles/help"
+	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
@@ -13,15 +15,23 @@ const (
 )
 
 var (
+	maxMultiplier        = 0.1
+	minMultiplier        = 0.001
+	cohesionMultiplier   = 0.01
+	separationMultiplier = 0.03
+	alignmentMultiplier  = 0.01
+)
+
+var (
 	borderColor = lipgloss.Color("205")
 	birdColor   = lipgloss.Color("240")
-	borderStyle = lipgloss.
-			NewStyle().
+	borderStyle = lipgloss.NewStyle().
 			Border(lipgloss.RoundedBorder()).
 			BorderForeground(borderColor)
-	birdsStyle = lipgloss.
-			NewStyle().
+	birdsStyle = lipgloss.NewStyle().
 			Foreground(birdColor)
+	helpStyle = lipgloss.NewStyle().
+			Foreground(lipgloss.Color("241"))
 )
 
 type tickMsg time.Time
@@ -34,12 +44,15 @@ type model struct {
 	flock        flock
 	tickInterval time.Duration
 	started      bool
+	help         help.Model
 }
 
 func newModel() model {
 	return model{
 		flock:        newFlock(),
 		tickInterval: 100 * time.Millisecond,
+		started:      false,
+		help:         help.New(),
 	}
 
 }
@@ -57,58 +70,60 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tick(m.tickInterval)
 		}
 	case tea.KeyMsg:
-		if msg.String() == "q" {
+		switch {
+		case key.Matches(msg, keys.Start):
+			m.started = !m.started
+			if !m.started {
+				return m, nil
+			}
+			return m, tick(m.tickInterval)
+		}
+		if key.Matches(msg, keys.Quit) {
 			return m, tea.Quit
 		}
-		if msg.String() == " " {
-			m.started = !m.started
-			if m.started {
-				return m, tick(m.tickInterval)
-			}
-			return m, nil
-		}
-		if msg.String() == "C" {
+		if key.Matches(msg, keys.CohesionUp) {
 			cohesionMultiplier += 0.01
 			if cohesionMultiplier > maxMultiplier {
 				cohesionMultiplier = maxMultiplier
 			}
 		}
-		if msg.String() == "c" {
+		if key.Matches(msg, keys.CohesionDown) {
 			cohesionMultiplier -= 0.01
 			if cohesionMultiplier < minMultiplier {
 				cohesionMultiplier = minMultiplier
 			}
 		}
-		if msg.String() == "S" {
+		if key.Matches(msg, keys.SeparationUp) {
 			separationMultiplier += 0.01
 			if separationMultiplier > maxMultiplier {
 				separationMultiplier = maxMultiplier
 			}
 		}
-		if msg.String() == "s" {
+		if key.Matches(msg, keys.SeparationDown) {
 			separationMultiplier -= 0.01
 			if separationMultiplier < minMultiplier {
 				separationMultiplier = minMultiplier
 			}
 		}
-		if msg.String() == "A" {
+		if key.Matches(msg, keys.AlignmentUp) {
 			alignmentMultiplier += 0.01
 			if alignmentMultiplier > maxMultiplier {
 				alignmentMultiplier = maxMultiplier
 			}
 		}
-		if msg.String() == "a" {
+		if key.Matches(msg, keys.AlignmentDown) {
 			alignmentMultiplier -= 0.01
 			if alignmentMultiplier < minMultiplier {
 				alignmentMultiplier = minMultiplier
 			}
 		}
 	}
-
 	return m, nil
 }
 
 func (m model) View() string {
+	help := m.help.View(keys)
+
 	var output string
 	for i := range height {
 		for j := range width {
@@ -126,5 +141,9 @@ func (m model) View() string {
 		}
 		output += "\n"
 	}
-	return borderStyle.Render(output)
+	return lipgloss.JoinVertical(
+		lipgloss.Left,
+		borderStyle.Render(output),
+		helpStyle.Render(help),
+	)
 }

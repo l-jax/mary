@@ -7,14 +7,6 @@ const (
 	maxSpeed = 2.0
 )
 
-var (
-	maxMultiplier        = 0.1
-	minMultiplier        = 0.001
-	cohesionMultiplier   = 0.01
-	separationMultiplier = 0.03
-	alignmentMultiplier  = 0.01
-)
-
 type bird struct {
 	char     rune
 	position vector
