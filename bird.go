@@ -1,13 +1,18 @@
 package main
 
 const (
-	edge                 = 10
-	near                 = 30
-	tooClose             = 2.5
+	edge     = 10
+	near     = 30
+	tooClose = 2.5
+	maxSpeed = 2.0
+)
+
+var (
+	maxMultiplier        = 0.1
+	minMultiplier        = 0.001
 	cohesionMultiplier   = 0.01
 	separationMultiplier = 0.03
 	alignmentMultiplier  = 0.01
-	maxSpeed             = 2.0
 )
 
 type bird struct {

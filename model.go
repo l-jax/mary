@@ -67,6 +67,42 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 			return m, nil
 		}
+		if msg.String() == "C" {
+			cohesionMultiplier += 0.01
+			if cohesionMultiplier > maxMultiplier {
+				cohesionMultiplier = maxMultiplier
+			}
+		}
+		if msg.String() == "c" {
+			cohesionMultiplier -= 0.01
+			if cohesionMultiplier < minMultiplier {
+				cohesionMultiplier = minMultiplier
+			}
+		}
+		if msg.String() == "S" {
+			separationMultiplier += 0.01
+			if separationMultiplier > maxMultiplier {
+				separationMultiplier = maxMultiplier
+			}
+		}
+		if msg.String() == "s" {
+			separationMultiplier -= 0.01
+			if separationMultiplier < minMultiplier {
+				separationMultiplier = minMultiplier
+			}
+		}
+		if msg.String() == "A" {
+			alignmentMultiplier += 0.01
+			if alignmentMultiplier > maxMultiplier {
+				alignmentMultiplier = maxMultiplier
+			}
+		}
+		if msg.String() == "a" {
+			alignmentMultiplier -= 0.01
+			if alignmentMultiplier < minMultiplier {
+				alignmentMultiplier = minMultiplier
+			}
+		}
 	}
 
 	return m, nil
