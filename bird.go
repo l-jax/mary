@@ -4,10 +4,10 @@ const (
 	edge                 = 10
 	near                 = 30
 	tooClose             = 2.5
-	cohesionMultiplier   = 0.03
+	cohesionMultiplier   = 0.01
 	separationMultiplier = 0.03
 	alignmentMultiplier  = 0.01
-	maxSpeed             = 5.0
+	maxSpeed             = 2.0
 )
 
 type bird struct {
