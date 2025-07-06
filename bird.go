@@ -7,7 +7,7 @@ const (
 	cohesionMultiplier   = 0.03
 	separationMultiplier = 0.03
 	alignmentMultiplier  = 0.01
-	maxSpeed             = 4.0
+	maxSpeed             = 5.0
 )
 
 type bird struct {

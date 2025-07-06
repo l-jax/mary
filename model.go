@@ -2,11 +2,24 @@ package main
 
 import (
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 )
 
 const (
 	width  = 80
 	height = 30
+)
+
+var (
+	borderColor = lipgloss.Color("205")
+	birdColor   = lipgloss.Color("240")
+	borderStyle = lipgloss.
+			NewStyle().
+			Border(lipgloss.RoundedBorder()).
+			BorderForeground(borderColor)
+	birdsStyle = lipgloss.
+			NewStyle().
+			Foreground(birdColor)
 )
 
 type model struct {
@@ -46,7 +59,7 @@ func (m model) View() string {
 			found := false
 			for _, bird := range m.flock.birds {
 				if bird.position.xInt() == i && bird.position.yInt() == j {
-					output += string(bird.char)
+					output += birdsStyle.Render(string(bird.char))
 					found = true
 					break
 				}
@@ -57,5 +70,5 @@ func (m model) View() string {
 		}
 		output += "\n"
 	}
-	return output
+	return borderStyle.Render(output)
 }

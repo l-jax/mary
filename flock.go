@@ -43,8 +43,8 @@ func newFlock() flock {
 			b := &bird{
 				char: char,
 				position: vector{
-					x: float64(i),
-					y: float64(j),
+					x: float64(i) + height/8,
+					y: float64(j) + width/4,
 				},
 				velocity: vector{
 					x: rand.Float64()*2 - 1,
