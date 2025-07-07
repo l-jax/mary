@@ -1,14 +1,15 @@
 package main
 
 const (
-	edge     = 10
-	near     = 30
-	tooClose = 2.5
-	maxSpeed = 2.0
+	topMargin  = 5
+	sideMargin = 15
+	near       = 30
+	tooClose   = 2.5
+	maxSpeed   = 2.0
 )
 
 type bird struct {
-	char     rune
+	word     string
 	position vector
 	velocity vector
 }
@@ -94,16 +95,16 @@ func (b *bird) alignment(others []*bird) {
 }
 
 func (b *bird) turnAwayFromEdge() {
-	if b.position.x < edge {
+	if b.position.x < topMargin {
 		b.velocity.x += 1
 	}
-	if b.position.x > height-edge {
+	if b.position.x > height-topMargin {
 		b.velocity.x -= 1
 	}
-	if b.position.y < edge {
+	if b.position.y < sideMargin {
 		b.velocity.y += 1
 	}
-	if b.position.y > width-edge {
+	if b.position.y > width-sideMargin {
 		b.velocity.y -= 1
 	}
 }

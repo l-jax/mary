@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	width  = 80
+	width  = 100
 	height = 30
 )
 
@@ -50,7 +50,7 @@ type model struct {
 func newModel() model {
 	return model{
 		flock:        newFlock(),
-		tickInterval: 100 * time.Millisecond,
+		tickInterval: 200 * time.Millisecond,
 		started:      false,
 		help:         help.New(),
 	}
@@ -130,7 +130,7 @@ func (m model) View() string {
 			found := false
 			for _, bird := range m.flock.birds {
 				if bird.position.xInt() == i && bird.position.yInt() == j {
-					output += birdsStyle.Render(string(bird.char))
+					output += birdsStyle.Render(bird.word)
 					found = true
 					break
 				}
@@ -143,7 +143,7 @@ func (m model) View() string {
 	}
 	return lipgloss.JoinVertical(
 		lipgloss.Left,
-		borderStyle.Render(output),
+		borderStyle.Width(width).Height(height).Render(output),
 		helpStyle.Render(help),
 	)
 }

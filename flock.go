@@ -1,6 +1,9 @@
 package main
 
-import "math/rand"
+import (
+	"math/rand"
+	"strings"
+)
 
 /*
 Starlings in Winter
@@ -35,23 +38,21 @@ type flock struct {
 func newFlock() flock {
 	birds := make([]*bird, 0, 200)
 	for i, line := range text {
-		for j, char := range line {
-			if char == ' ' || char == '\n' {
-				continue
-			}
-
+		y := 0
+		words := strings.Split(line, " ")
+		for j, word := range words {
 			b := &bird{
-				char: char,
+				word: word,
 				position: vector{
 					x: float64(i) + height/8,
-					y: float64(j) + width/4,
+					y: float64(j+y) + width/4,
 				},
 				velocity: vector{
 					x: rand.Float64()*2 - 1,
 					y: rand.Float64()*2 - 1,
 				},
 			}
-
+			y++
 			birds = append(birds, b)
 		}
 	}
