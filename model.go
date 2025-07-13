@@ -17,7 +17,7 @@ const (
 var (
 	maxMultiplier        = 0.1
 	minMultiplier        = 0.001
-	cohesionMultiplier   = 0.01
+	cohesionMultiplier   = 0.008
 	separationMultiplier = 0.03
 	alignmentMultiplier  = 0.01
 )
@@ -47,7 +47,7 @@ type model struct {
 func newModel() model {
 	return model{
 		flock:        newFlock(),
-		tickInterval: 200 * time.Millisecond,
+		tickInterval: 125 * time.Millisecond,
 		started:      false,
 		help:         help.New(),
 	}

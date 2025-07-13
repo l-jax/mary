@@ -1,6 +1,7 @@
 package main
 
 import (
+	"math/rand"
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
@@ -64,7 +65,6 @@ func newFlock() flock {
 					x: float64(j+x) + sideMargin,
 					y: float64(i) + topMargin,
 				},
-				birdPalette[(i+j)%len(birdPalette)],
 			)
 			x += len(word)
 			birds = append(birds, b)
@@ -96,7 +96,8 @@ func (f *flock) release() {
 		return
 	}
 
-	f.birds[f.next].release()
+	color := birdPalette[rand.Intn(len(birdPalette))]
+	f.birds[f.next].release(color)
 	f.next++
 	f.ticksSinceLastRelease = 0
 }

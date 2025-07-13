@@ -28,7 +28,7 @@ type bird struct {
 	color    lipgloss.Color
 }
 
-func newBird(word string, position vector, color lipgloss.Color) *bird {
+func newBird(word string, position vector) *bird {
 	letters := make([]letter, len(word))
 	for i, char := range word {
 		letters[i] = letter{
@@ -41,15 +41,15 @@ func newBird(word string, position vector, color lipgloss.Color) *bird {
 		letters:  letters,
 		position: position,
 		velocity: vector{y: 0, x: 0},
-		color:    color,
+		color:    lipgloss.Color(204),
 	}
 }
 
-func (b *bird) release() {
+func (b *bird) release(color lipgloss.Color) {
 	if b.released || len(b.letters) == 0 {
 		return
 	}
-
+	b.color = color
 	b.released = true
 	b.velocity = vector{
 		y: (rand.Float64() - 1) * 2,
