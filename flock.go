@@ -1,7 +1,6 @@
 package main
 
 import (
-	"math/rand"
 	"strings"
 )
 
@@ -38,21 +37,16 @@ type flock struct {
 func newFlock() flock {
 	birds := make([]*bird, 0, 200)
 	for i, line := range text {
-		y := 0
+		x := 0
 		words := strings.Split(line, " ")
 		for j, word := range words {
-			b := &bird{
-				word: word,
-				position: vector{
-					x: float64(i) + height/8,
-					y: float64(j+y) + width/4,
-				},
-				velocity: vector{
-					x: rand.Float64()*2 - 1,
-					y: rand.Float64()*2 - 1,
-				},
-			}
-			y++
+			b := newBird(
+				word,
+				vector{
+					x: float64(j+x) + sideMargin,
+					y: float64(i) + topMargin,
+				})
+			x += len(word)
 			birds = append(birds, b)
 		}
 	}

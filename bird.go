@@ -8,14 +8,48 @@ const (
 	maxSpeed   = 2.0
 )
 
+type letter struct {
+	char     rune
+	position vector
+}
+
 type bird struct {
 	word     string
+	letters  []letter
 	position vector
 	velocity vector
 }
 
+func newBird(word string, position vector) *bird {
+	letters := make([]letter, len(word))
+	for i, char := range word {
+		letters[i] = letter{
+			char:     char,
+			position: vector{y: position.y, x: position.x + float64(i)},
+		}
+	}
+	return &bird{
+		word:     word,
+		letters:  letters,
+		position: position,
+		velocity: vector{y: 0, x: 0},
+	}
+}
+
 func (b *bird) move() {
 	b.position.add(b.velocity)
+
+	if len(b.letters) == 0 {
+		return
+	}
+
+	lead := b.position
+	for i := range b.letters {
+		dir := lead.difference(b.letters[i].position)
+		dir.multiply(0.5)
+		b.letters[i].position.add(dir)
+		lead = b.letters[i].position
+	}
 }
 
 func (b *bird) turn(others []*bird) {
@@ -95,17 +129,17 @@ func (b *bird) alignment(others []*bird) {
 }
 
 func (b *bird) turnAwayFromEdge() {
-	if b.position.x < topMargin {
-		b.velocity.x += 1
-	}
-	if b.position.x > height-topMargin {
-		b.velocity.x -= 1
-	}
-	if b.position.y < sideMargin {
+	if b.position.y < topMargin {
 		b.velocity.y += 1
 	}
-	if b.position.y > width-sideMargin {
+	if b.position.y > height-topMargin {
 		b.velocity.y -= 1
+	}
+	if b.position.x < sideMargin {
+		b.velocity.x += 1
+	}
+	if b.position.x > width-sideMargin {
+		b.velocity.x -= 1
 	}
 }
 

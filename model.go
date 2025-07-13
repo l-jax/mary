@@ -24,12 +24,9 @@ var (
 
 var (
 	borderColor = lipgloss.Color("205")
-	birdColor   = lipgloss.Color("240")
 	borderStyle = lipgloss.NewStyle().
 			Border(lipgloss.RoundedBorder()).
 			BorderForeground(borderColor)
-	birdsStyle = lipgloss.NewStyle().
-			Foreground(birdColor)
 	helpStyle = lipgloss.NewStyle().
 			Foreground(lipgloss.Color("241"))
 )
@@ -122,28 +119,30 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m model) View() string {
-	help := m.help.View(keys)
+	grid := make([][]rune, height)
+	for i := range grid {
+		grid[i] = make([]rune, width)
+		for j := range grid[i] {
+			grid[i][j] = ' '
+		}
+	}
 
-	var output string
-	for i := range height {
-		for j := range width {
-			found := false
-			for _, bird := range m.flock.birds {
-				if bird.position.xInt() == i && bird.position.yInt() == j {
-					output += birdsStyle.Render(bird.word)
-					found = true
-					break
-				}
-			}
-			if !found {
-				output += " "
+	for _, bird := range m.flock.birds {
+		for _, letter := range bird.letters {
+			if int(letter.position.y) < height && int(letter.position.x) < width {
+				grid[int(letter.position.y)][int(letter.position.x)] = letter.char
 			}
 		}
-		output += "\n"
 	}
+
+	var output string
+	for _, row := range grid {
+		output += string(row) + "\n"
+	}
+	output = borderStyle.Render(output)
 	return lipgloss.JoinVertical(
 		lipgloss.Left,
-		borderStyle.Width(width).Height(height).Render(output),
-		helpStyle.Render(help),
+		output,
+		helpStyle.Render(m.help.View(keys)),
 	)
 }
