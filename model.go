@@ -120,25 +120,30 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m model) View() string {
-	grid := make([][]rune, height)
+	grid := make([][]string, height)
 	for i := range grid {
-		grid[i] = make([]rune, width)
+		grid[i] = make([]string, width)
 		for j := range grid[i] {
-			grid[i][j] = ' '
+			grid[i][j] = " "
 		}
 	}
 
 	for _, bird := range m.flock.birds {
 		for _, letter := range bird.letters {
-			if int(letter.position.y) < height && int(letter.position.x) < width {
-				grid[int(letter.position.y)][int(letter.position.x)] = letter.char
+			y, x := int(letter.position.x), int(letter.position.y)
+			if x < height && y < width {
+				style := lipgloss.NewStyle().Foreground(bird.color)
+				grid[x][y] = style.Render(string(letter.char))
 			}
 		}
 	}
 
 	var output string
 	for _, row := range grid {
-		output += string(row) + "\n"
+		for _, cell := range row {
+			output += cell
+		}
+		output += "\n"
 	}
 	output = borderStyle.Render(output)
 	return lipgloss.JoinVertical(

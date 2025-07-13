@@ -1,6 +1,10 @@
 package main
 
-import "math/rand/v2"
+import (
+	"math/rand/v2"
+
+	"github.com/charmbracelet/lipgloss"
+)
 
 const (
 	topMargin  = 5
@@ -21,9 +25,10 @@ type bird struct {
 	position vector
 	velocity vector
 	released bool
+	color    lipgloss.Color
 }
 
-func newBird(word string, position vector) *bird {
+func newBird(word string, position vector, color lipgloss.Color) *bird {
 	letters := make([]letter, len(word))
 	for i, char := range word {
 		letters[i] = letter{
@@ -36,6 +41,7 @@ func newBird(word string, position vector) *bird {
 		letters:  letters,
 		position: position,
 		velocity: vector{y: 0, x: 0},
+		color:    color,
 	}
 }
 

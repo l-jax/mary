@@ -2,6 +2,8 @@ package main
 
 import (
 	"strings"
+
+	"github.com/charmbracelet/lipgloss"
 )
 
 /*
@@ -30,6 +32,19 @@ var text = []string{
 	"full of gorgeous life.",
 }
 
+var birdPalette = []lipgloss.Color{
+	lipgloss.Color("#b3cde0"), // soft blue
+	lipgloss.Color("#6497b1"), // blue
+	lipgloss.Color("#005b96"), // deep blue
+	lipgloss.Color("#03396c"), // navy
+	lipgloss.Color("#cdb4db"), // lavender
+	lipgloss.Color("#ffc8dd"), // pink
+	lipgloss.Color("#ffafcc"), // rose
+	lipgloss.Color("#a2d2ff"), // sky
+	lipgloss.Color("#b5ead7"), // mint
+	lipgloss.Color("#f7cac9"), // blush
+}
+
 type flock struct {
 	birds                 []*bird
 	next                  int
@@ -48,7 +63,9 @@ func newFlock() flock {
 				vector{
 					x: float64(j+x) + sideMargin,
 					y: float64(i) + topMargin,
-				})
+				},
+				birdPalette[(i+j)%len(birdPalette)],
+			)
 			x += len(word)
 			birds = append(birds, b)
 		}
