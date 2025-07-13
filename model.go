@@ -63,6 +63,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case tickMsg:
 		if m.started {
+			m.flock.release()
 			m.flock.move()
 			return m, tick(m.tickInterval)
 		}

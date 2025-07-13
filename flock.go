@@ -31,7 +31,10 @@ var text = []string{
 }
 
 type flock struct {
-	birds []*bird
+	birds                 []*bird
+	next                  int
+	ticksBetweenReleases  int
+	ticksSinceLastRelease int
 }
 
 func newFlock() flock {
@@ -52,7 +55,10 @@ func newFlock() flock {
 	}
 
 	return flock{
-		birds: birds,
+		birds:                 birds,
+		next:                  0,
+		ticksBetweenReleases:  1,
+		ticksSinceLastRelease: 0,
 	}
 }
 
@@ -61,4 +67,19 @@ func (f *flock) move() {
 		bird.turn(f.birds)
 		bird.move()
 	}
+}
+
+func (f *flock) release() {
+	if f.next >= len(f.birds) {
+		return
+	}
+
+	f.ticksSinceLastRelease++
+	if f.ticksSinceLastRelease < f.ticksBetweenReleases {
+		return
+	}
+
+	f.birds[f.next].release()
+	f.next++
+	f.ticksSinceLastRelease = 0
 }

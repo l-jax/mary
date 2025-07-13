@@ -1,5 +1,7 @@
 package main
 
+import "math/rand/v2"
+
 const (
 	topMargin  = 5
 	sideMargin = 15
@@ -18,6 +20,7 @@ type bird struct {
 	letters  []letter
 	position vector
 	velocity vector
+	released bool
 }
 
 func newBird(word string, position vector) *bird {
@@ -36,12 +39,24 @@ func newBird(word string, position vector) *bird {
 	}
 }
 
-func (b *bird) move() {
-	b.position.add(b.velocity)
-
-	if len(b.letters) == 0 {
+func (b *bird) release() {
+	if b.released || len(b.letters) == 0 {
 		return
 	}
+
+	b.released = true
+	b.velocity = vector{
+		y: (rand.Float64() - 1) * 2,
+		x: (rand.Float64()) * 2,
+	}
+}
+
+func (b *bird) move() {
+	if !b.released || len(b.letters) == 0 {
+		return
+	}
+
+	b.position.add(b.velocity)
 
 	lead := b.position
 	for i := range b.letters {
@@ -53,6 +68,10 @@ func (b *bird) move() {
 }
 
 func (b *bird) turn(others []*bird) {
+	if !b.released || len(others) == 0 {
+		return
+	}
+
 	b.cohesion(others)
 	b.separation(others)
 	b.alignment(others)
