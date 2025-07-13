@@ -9,8 +9,8 @@ import (
 const (
 	topMargin  = 5
 	sideMargin = 15
-	near       = 30
-	tooClose   = 2.5
+	near       = 25
+	tooClose   = 4.0
 	maxSpeed   = 2.0
 )
 
@@ -41,7 +41,7 @@ func newBird(word string, position vector) *bird {
 		letters:  letters,
 		position: position,
 		velocity: vector{y: 0, x: 0},
-		color:    lipgloss.Color(204),
+		color:    lipgloss.Color("#d9d9d9"),
 	}
 }
 

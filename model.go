@@ -47,7 +47,7 @@ type model struct {
 func newModel() model {
 	return model{
 		flock:        newFlock(),
-		tickInterval: 125 * time.Millisecond,
+		tickInterval: 150 * time.Millisecond,
 		started:      false,
 		help:         help.New(),
 	}
