@@ -9,19 +9,6 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-const (
-	width  = 100
-	height = 30
-)
-
-var (
-	maxMultiplier        = 0.1
-	minMultiplier        = 0.001
-	cohesionMultiplier   = 0.008
-	separationMultiplier = 0.03
-	alignmentMultiplier  = 0.01
-)
-
 type tickMsg time.Time
 
 func tick(t time.Duration) tea.Cmd {
@@ -71,37 +58,37 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		}
 		if key.Matches(msg, keys.CohesionUp) {
-			cohesionMultiplier += 0.01
+			cohesionMultiplier += step
 			if cohesionMultiplier > maxMultiplier {
 				cohesionMultiplier = maxMultiplier
 			}
 		}
 		if key.Matches(msg, keys.CohesionDown) {
-			cohesionMultiplier -= 0.01
+			cohesionMultiplier -= step
 			if cohesionMultiplier < minMultiplier {
 				cohesionMultiplier = minMultiplier
 			}
 		}
 		if key.Matches(msg, keys.SeparationUp) {
-			separationMultiplier += 0.01
+			separationMultiplier += step
 			if separationMultiplier > maxMultiplier {
 				separationMultiplier = maxMultiplier
 			}
 		}
 		if key.Matches(msg, keys.SeparationDown) {
-			separationMultiplier -= 0.01
+			separationMultiplier -= step
 			if separationMultiplier < minMultiplier {
 				separationMultiplier = minMultiplier
 			}
 		}
 		if key.Matches(msg, keys.AlignmentUp) {
-			alignmentMultiplier += 0.01
+			alignmentMultiplier += step
 			if alignmentMultiplier > maxMultiplier {
 				alignmentMultiplier = maxMultiplier
 			}
 		}
 		if key.Matches(msg, keys.AlignmentDown) {
-			alignmentMultiplier -= 0.01
+			alignmentMultiplier -= step
 			if alignmentMultiplier < minMultiplier {
 				alignmentMultiplier = minMultiplier
 			}

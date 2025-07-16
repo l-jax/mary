@@ -5,61 +5,31 @@ import (
 	"strings"
 )
 
-/*
-Starlings in Winter
-Mary Oliver
-*/
-var text = []string{
-	"",
-	"dipping and rising;",
-	"they float like one stippled star",
-	"that opens,",
-	"becomes for a moment fragmented,",
-	"",
-	"then closes again;",
-	"and you watch",
-	"and you try",
-	"but you simply can't imagine",
-	"",
-	"how they do it",
-	"with no articulated instruction, no pause,",
-	"only the silent confirmation",
-	"that they are this notable thing,",
-	"",
-	"this wheel of many parts, that can rise and spin",
-	"over and over again,",
-	"full of gorgeous life.",
-}
-
 type flock struct {
 	birds                 []*bird
 	next                  int
-	ticksBetweenReleases  int
 	ticksSinceLastRelease int
 }
 
 func newFlock() flock {
-	birds := make([]*bird, 0, 200)
-	for i, line := range text {
-		x := 0
-		words := strings.Split(line, " ")
-		for j, word := range words {
-			b := newBird(
-				word,
-				vector{
-					x: float64(j+x) + sideMargin,
-					y: float64(i) + topMargin,
-				},
-			)
-			x += len(word)
+	birds := []*bird{}
+	lines := strings.Split(text, "\n")
+	for y, line := range lines {
+		words := strings.Fields(line)
+		offset := 0
+		for _, word := range words {
+			pos := vector{
+				y: float64(y + topMargin),
+				x: float64(offset + sideMargin),
+			}
+			b := newBird(word, pos)
 			birds = append(birds, b)
+			offset += len(word) + 1
 		}
 	}
-
 	return flock{
 		birds:                 birds,
 		next:                  0,
-		ticksBetweenReleases:  1,
 		ticksSinceLastRelease: 0,
 	}
 }
@@ -77,7 +47,7 @@ func (f *flock) release() {
 	}
 
 	f.ticksSinceLastRelease++
-	if f.ticksSinceLastRelease < f.ticksBetweenReleases {
+	if f.ticksSinceLastRelease < ticksBetweenReleases {
 		return
 	}
 
