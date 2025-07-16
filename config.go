@@ -15,15 +15,9 @@ const (
 BIRDS
 */
 const (
-	near          = 25
-	tooClose      = 4.0
-	maxSpeed      = 2.0
-	maxMultiplier = 0.1
-	minMultiplier = 0.001
-	step          = 0.01
-)
-
-var (
+	near                 = 25
+	tooClose             = 4.0
+	maxSpeed             = 2.0
 	cohesionMultiplier   = 0.008
 	separationMultiplier = 0.03
 	alignmentMultiplier  = 0.01
@@ -33,6 +27,7 @@ var (
 FLOCK
 */
 const (
+	millisBetweenTicks   = 150
 	ticksBetweenReleases = 1
 )
 

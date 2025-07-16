@@ -25,7 +25,7 @@ type model struct {
 func newModel() model {
 	return model{
 		flock:        newFlock(),
-		tickInterval: 150 * time.Millisecond,
+		tickInterval: millisBetweenTicks * time.Millisecond,
 		started:      false,
 		help:         help.New(),
 	}
@@ -56,42 +56,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 		if key.Matches(msg, keys.Quit) {
 			return m, tea.Quit
-		}
-		if key.Matches(msg, keys.CohesionUp) {
-			cohesionMultiplier += step
-			if cohesionMultiplier > maxMultiplier {
-				cohesionMultiplier = maxMultiplier
-			}
-		}
-		if key.Matches(msg, keys.CohesionDown) {
-			cohesionMultiplier -= step
-			if cohesionMultiplier < minMultiplier {
-				cohesionMultiplier = minMultiplier
-			}
-		}
-		if key.Matches(msg, keys.SeparationUp) {
-			separationMultiplier += step
-			if separationMultiplier > maxMultiplier {
-				separationMultiplier = maxMultiplier
-			}
-		}
-		if key.Matches(msg, keys.SeparationDown) {
-			separationMultiplier -= step
-			if separationMultiplier < minMultiplier {
-				separationMultiplier = minMultiplier
-			}
-		}
-		if key.Matches(msg, keys.AlignmentUp) {
-			alignmentMultiplier += step
-			if alignmentMultiplier > maxMultiplier {
-				alignmentMultiplier = maxMultiplier
-			}
-		}
-		if key.Matches(msg, keys.AlignmentDown) {
-			alignmentMultiplier -= step
-			if alignmentMultiplier < minMultiplier {
-				alignmentMultiplier = minMultiplier
-			}
 		}
 	}
 	return m, nil
