@@ -18,7 +18,7 @@ const (
 	near                 = 25
 	tooClose             = 4.0
 	maxSpeed             = 2.0
-	cohesionMultiplier   = 0.008
+	cohesionMultiplier   = 0.02
 	separationMultiplier = 0.03
 	alignmentMultiplier  = 0.01
 )
