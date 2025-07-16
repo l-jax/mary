@@ -72,10 +72,10 @@ func (m model) View() string {
 
 	for _, bird := range m.flock.birds {
 		for _, letter := range bird.letters {
-			y, x := int(letter.position.x), int(letter.position.y)
-			if x < height && y < width {
+			x, y := int(letter.position.x), int(letter.position.y)
+			if x < width && y < height {
 				style := lipgloss.NewStyle().Foreground(bird.color)
-				grid[x][y] = style.Render(string(letter.char))
+				grid[y][x] = style.Render(string(letter.char))
 			}
 		}
 	}

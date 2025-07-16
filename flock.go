@@ -19,8 +19,8 @@ func newFlock() flock {
 		offset := 0
 		for _, word := range words {
 			pos := vector{
-				y: float64(y + topMargin),
 				x: float64(offset + sideMargin),
+				y: float64(y + topMargin),
 			}
 			b := newBird(word, pos)
 			birds = append(birds, b)

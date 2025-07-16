@@ -3,15 +3,7 @@ package main
 import "math"
 
 type vector struct {
-	y, x float64
-}
-
-func (v *vector) xInt() int {
-	return int(v.y)
-}
-
-func (v *vector) yInt() int {
-	return int(v.x)
+	x, y float64
 }
 
 func (v *vector) add(other vector) {
