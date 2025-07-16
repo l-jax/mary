@@ -3,8 +3,6 @@ package main
 import (
 	"math/rand"
 	"strings"
-
-	"github.com/charmbracelet/lipgloss"
 )
 
 /*
@@ -31,19 +29,6 @@ var text = []string{
 	"this wheel of many parts, that can rise and spin",
 	"over and over again,",
 	"full of gorgeous life.",
-}
-
-var birdPalette = []lipgloss.Color{
-	lipgloss.Color("#b3cde0"), // soft blue
-	lipgloss.Color("#6497b1"), // blue
-	lipgloss.Color("#005b96"), // deep blue
-	lipgloss.Color("#03396c"), // navy
-	lipgloss.Color("#cdb4db"), // lavender
-	lipgloss.Color("#ffc8dd"), // pink
-	lipgloss.Color("#ffafcc"), // rose
-	lipgloss.Color("#a2d2ff"), // sky
-	lipgloss.Color("#b5ead7"), // mint
-	lipgloss.Color("#f7cac9"), // blush
 }
 
 type flock struct {
@@ -96,7 +81,7 @@ func (f *flock) release() {
 		return
 	}
 
-	color := birdPalette[rand.Intn(len(birdPalette))]
+	color := birdColors[rand.Intn(len(birdColors))]
 	f.birds[f.next].release(color)
 	f.next++
 	f.ticksSinceLastRelease = 0

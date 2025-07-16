@@ -22,15 +22,6 @@ var (
 	alignmentMultiplier  = 0.01
 )
 
-var (
-	borderColor = lipgloss.Color("205")
-	borderStyle = lipgloss.NewStyle().
-			Border(lipgloss.RoundedBorder()).
-			BorderForeground(borderColor)
-	helpStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color("241"))
-)
-
 type tickMsg time.Time
 
 func tick(t time.Duration) tea.Cmd {
