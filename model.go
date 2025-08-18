@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"strings"
 	"time"
 
 	"github.com/charmbracelet/bubbles/help"
@@ -20,6 +22,9 @@ type model struct {
 	tickInterval time.Duration
 	started      bool
 	help         help.Model
+	cohesion     float64
+	separation   float64
+	alignment    float64
 }
 
 func newModel() model {
@@ -28,6 +33,9 @@ func newModel() model {
 		tickInterval: millisBetweenTicks * time.Millisecond,
 		started:      false,
 		help:         help.New(),
+		cohesion:     0.02,
+		separation:   0.03,
+		alignment:    0.01,
 	}
 
 }
@@ -42,7 +50,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tickMsg:
 		if m.started {
 			m.flock.release()
-			m.flock.move()
+			m.flock.move(m.cohesion, m.separation, m.alignment)
 			return m, tick(m.tickInterval)
 		}
 	case tea.KeyMsg:
@@ -53,6 +61,18 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, nil
 			}
 			return m, tick(m.tickInterval)
+		case key.Matches(msg, keys.CohesionUp):
+			m.cohesion = min(m.cohesion+0.01, 0.2)
+		case key.Matches(msg, keys.CohesionDn):
+			m.cohesion = max(m.cohesion-0.01, 0.0)
+		case key.Matches(msg, keys.SeparationUp):
+			m.separation = min(m.separation+0.01, 0.2)
+		case key.Matches(msg, keys.SeparationDn):
+			m.separation = max(m.separation-0.01, 0.0)
+		case key.Matches(msg, keys.AlignmentUp):
+			m.alignment = min(m.alignment+0.01, 0.2)
+		case key.Matches(msg, keys.AlignmentDn):
+			m.alignment = max(m.alignment-0.01, 0.0)
 		}
 		if key.Matches(msg, keys.Quit) {
 			return m, tea.Quit
@@ -88,9 +108,46 @@ func (m model) View() string {
 		output += "\n"
 	}
 	output = borderStyle.Render(output)
+
+	sliders := lipgloss.JoinVertical(lipgloss.Left,
+		slider("Cohesion", m.cohesion, 0.0, 0.2, 20),
+		slider("Separation", m.separation, 0.0, 0.2, 20),
+		slider("Alignment", m.alignment, 0.0, 0.2, 20),
+	)
+
 	return lipgloss.JoinVertical(
 		lipgloss.Left,
+		sliders,
 		output,
 		helpStyle.Render(m.help.View(keys)),
 	)
+}
+
+func min(a, b float64) float64 {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+func max(a, b float64) float64 {
+	if a > b {
+		return a
+	}
+	return b
+}
+
+func slider(label string, value, min, max float64, width int) string {
+	pos := int((value - min) / (max - min) * float64(width-2))
+	if pos < 0 {
+		pos = 0
+	}
+	if pos > width-2 {
+		pos = width - 2
+	}
+	bar := "[" + strings.Repeat("=", pos) + ">" + strings.Repeat(" ", width-2-pos) + "]"
+	return lipgloss.NewStyle().
+		Render(
+			fmt.Sprintf("%-11s %s %.3f", label+":", bar, value),
+		)
 }

@@ -15,12 +15,9 @@ const (
 BIRDS
 */
 const (
-	near                 = 10
-	tooClose             = 3.0
-	maxSpeed             = 1.0
-	cohesionMultiplier   = 0.02
-	separationMultiplier = 0.03
-	alignmentMultiplier  = 0.01
+	near     = 10
+	tooClose = 3.0
+	maxSpeed = 1.0
 )
 
 /*

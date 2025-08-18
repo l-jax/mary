@@ -34,9 +34,9 @@ func newFlock() flock {
 	}
 }
 
-func (f *flock) move() {
+func (f *flock) move(cohesion, separation, alignment float64) {
 	for _, bird := range f.birds {
-		bird.turn(f.birds)
+		bird.turn(f.birds, cohesion, separation, alignment)
 		bird.move()
 	}
 }

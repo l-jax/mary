@@ -65,19 +65,19 @@ func (b *bird) move() {
 	}
 }
 
-func (b *bird) turn(others []*bird) {
+func (b *bird) turn(others []*bird, cohesion, separation, alignment float64) {
 	if !b.released || len(others) == 0 {
 		return
 	}
 
-	b.cohesion(others)
-	b.separation(others)
-	b.alignment(others)
+	b.cohesion(others, cohesion)
+	b.separation(others, separation)
+	b.alignment(others, alignment)
 	b.turnAwayFromEdge()
 	b.limitSpeed()
 }
 
-func (b *bird) cohesion(others []*bird) {
+func (b *bird) cohesion(others []*bird, cohesion float64) {
 	var sum vector
 	count := 0
 	for _, other := range others {
@@ -95,11 +95,11 @@ func (b *bird) cohesion(others []*bird) {
 
 	sum.divide(float64(count))
 	sum.subtract(b.position)
-	sum.multiply(cohesionMultiplier)
+	sum.multiply(cohesion)
 	b.velocity.add(sum)
 }
 
-func (b *bird) separation(others []*bird) {
+func (b *bird) separation(others []*bird, separation float64) {
 	var sum vector
 	for _, other := range others {
 		if other == b {
@@ -114,11 +114,11 @@ func (b *bird) separation(others []*bird) {
 		}
 	}
 
-	sum.multiply(separationMultiplier)
+	sum.multiply(separation)
 	b.velocity.add(sum)
 }
 
-func (b *bird) alignment(others []*bird) {
+func (b *bird) alignment(others []*bird, alignment float64) {
 	var sum vector
 	count := 0
 
@@ -141,7 +141,7 @@ func (b *bird) alignment(others []*bird) {
 
 	sum.divide(float64(count))
 	difference := b.velocity.difference(sum)
-	difference.multiply(alignmentMultiplier)
+	difference.multiply(alignment)
 	b.velocity.add(difference)
 }
 
