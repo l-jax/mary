@@ -17,6 +17,20 @@ func tick(t time.Duration) tea.Cmd {
 	return tea.Every(t, func(t time.Time) tea.Msg { return tickMsg(t) })
 }
 
+type FlockPreset struct {
+	Name       string
+	Cohesion   float64
+	Separation float64
+	Alignment  float64
+}
+
+var presets = []FlockPreset{
+	{"Calm", 0.05, 0.02, 0.04},
+	{"Chaotic", 0.01, 0.18, 0.01},
+	{"Swarm", 0.18, 0.05, 0.18},
+	{"Cluster", 0.15, 0.18, 0.02},
+}
+
 type model struct {
 	flock        flock
 	tickInterval time.Duration
@@ -25,6 +39,7 @@ type model struct {
 	cohesion     float64
 	separation   float64
 	alignment    float64
+	presetIdx    int
 }
 
 func newModel() model {
@@ -36,6 +51,7 @@ func newModel() model {
 		cohesion:     0.02,
 		separation:   0.03,
 		alignment:    0.01,
+		presetIdx:    0,
 	}
 
 }
@@ -73,12 +89,29 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.alignment = min(m.alignment+0.01, 0.2)
 		case key.Matches(msg, keys.AlignmentDn):
 			m.alignment = max(m.alignment-0.01, 0.0)
+		case msg.String() == "1":
+			m.applyPreset(0)
+		case msg.String() == "2":
+			m.applyPreset(1)
+		case msg.String() == "3":
+			m.applyPreset(2)
+		case msg.String() == "4":
+			m.applyPreset(3)
 		}
 		if key.Matches(msg, keys.Quit) {
 			return m, tea.Quit
 		}
 	}
 	return m, nil
+}
+
+func (m *model) applyPreset(idx int) {
+	if idx >= 0 && idx < len(presets) {
+		m.cohesion = presets[idx].Cohesion
+		m.separation = presets[idx].Separation
+		m.alignment = presets[idx].Alignment
+		m.presetIdx = idx
+	}
 }
 
 func (m model) View() string {
@@ -115,8 +148,10 @@ func (m model) View() string {
 		slider("Alignment", m.alignment, 0.0, 0.2, 20),
 	)
 
+	presetLabel := fmt.Sprintf("Preset: %s", presets[m.presetIdx].Name)
 	return lipgloss.JoinVertical(
 		lipgloss.Left,
+		presetLabel,
 		sliders,
 		output,
 		helpStyle.Render(m.help.View(keys)),
