@@ -31,7 +31,6 @@ func (v *vector) multiply(i float64) {
 	}
 	v.y *= i
 	v.x *= i
-
 }
 
 func (v *vector) distance(other vector) float64 {

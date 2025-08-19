@@ -65,14 +65,14 @@ func (b *bird) move() {
 	}
 }
 
-func (b *bird) turn(others []*bird, cohesion, separation, alignment float64) {
+func (b *bird) turn(others []*bird, config FlockConfig) {
 	if !b.released || len(others) == 0 {
 		return
 	}
 
-	b.cohesion(others, cohesion)
-	b.separation(others, separation)
-	b.alignment(others, alignment)
+	b.cohesion(others, config.Cohesion)
+	b.separation(others, config.Separation)
+	b.alignment(others, config.Alignment)
 	b.turnAwayFromEdge()
 	b.limitSpeed()
 }

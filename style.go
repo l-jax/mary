@@ -48,4 +48,6 @@ var (
 			BorderForeground(borderColor)
 	helpStyle = lipgloss.NewStyle().
 			Foreground(helpColor)
+	sliderStyle = lipgloss.NewStyle().
+			Foreground(helpColor)
 )

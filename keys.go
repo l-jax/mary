@@ -3,12 +3,12 @@ package main
 import "github.com/charmbracelet/bubbles/key"
 
 func (k keyMap) ShortHelp() []key.Binding {
-	return []key.Binding{k.Start, k.Quit}
+	return []key.Binding{k.Start, k.Calm, k.Chaotic, k.Swarm, k.Cluster, k.Quit}
 }
 
 func (k keyMap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
-		{k.Start, k.Quit},
+		{k.Start, k.Calm, k.Chaotic, k.Swarm, k.Cluster, k.Quit},
 	}
 }
 
@@ -21,6 +21,10 @@ type keyMap struct {
 	SeparationDn key.Binding
 	AlignmentUp  key.Binding
 	AlignmentDn  key.Binding
+	Calm         key.Binding
+	Chaotic      key.Binding
+	Swarm        key.Binding
+	Cluster      key.Binding
 }
 
 var keys = keyMap{
@@ -55,5 +59,21 @@ var keys = keyMap{
 	AlignmentDn: key.NewBinding(
 		key.WithKeys("f"),
 		key.WithHelp("f", "alignment-"),
+	),
+	Calm: key.NewBinding(
+		key.WithKeys("1"),
+		key.WithHelp("1", "calm"),
+	),
+	Chaotic: key.NewBinding(
+		key.WithKeys("2"),
+		key.WithHelp("2", "chaotic"),
+	),
+	Swarm: key.NewBinding(
+		key.WithKeys("3"),
+		key.WithHelp("3", "swarm"),
+	),
+	Cluster: key.NewBinding(
+		key.WithKeys("4"),
+		key.WithHelp("4", "cluster"),
 	),
 }
