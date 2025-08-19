@@ -1,16 +1,16 @@
 package main
 
-type Preset int
+type Mode int
 
 const (
-	Custom Preset = iota
+	Custom Mode = iota
 	Calm
 	Chaotic
 	Swarm
 	Cluster
 )
 
-var presetName = map[Preset]string{
+var modeName = map[Mode]string{
 	Custom:  "Custom",
 	Calm:    "Calm",
 	Chaotic: "Chaotic",
@@ -18,15 +18,7 @@ var presetName = map[Preset]string{
 	Cluster: "Cluster",
 }
 
-func (p Preset) String() string {
-	return presetName[p]
-}
-
-func (p Preset) GetConfig() FlockConfig {
-	return presetConfig[p]
-}
-
-var presetConfig = []FlockConfig{
+var modeConfig = []ModeConfig{
 	{Custom, 0.1, 0.1, 0.1},
 	{Calm, 0.05, 0.02, 0.04},
 	{Chaotic, 0.01, 0.18, 0.01},
@@ -34,8 +26,20 @@ var presetConfig = []FlockConfig{
 	{Cluster, 0.15, 0.18, 0.02},
 }
 
-type FlockConfig struct {
-	Name       Preset
+func (m Mode) Index() uint {
+	return uint(m)
+}
+
+func (m Mode) String() string {
+	return modeName[m]
+}
+
+func (m Mode) GetConfig() ModeConfig {
+	return modeConfig[m]
+}
+
+type ModeConfig struct {
+	Name       Mode
 	Cohesion   float64
 	Separation float64
 	Alignment  float64

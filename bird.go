@@ -63,7 +63,7 @@ func (b *bird) move() {
 	}
 }
 
-func (b *bird) turn(others []*bird, config FlockConfig) {
+func (b *bird) turn(others []*bird, config ModeConfig) {
 	if !b.released || len(others) == 0 {
 		return
 	}

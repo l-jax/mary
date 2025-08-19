@@ -26,9 +26,6 @@ func (v *vector) divide(i float64) {
 }
 
 func (v *vector) multiply(i float64) {
-	if i == 0 {
-		return
-	}
 	v.y *= i
 	v.x *= i
 }

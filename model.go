@@ -20,7 +20,7 @@ func tick(t time.Duration) tea.Cmd {
 type model struct {
 	flock        flock
 	tickInterval time.Duration
-	config       FlockConfig
+	mode         ModeConfig
 	started      bool
 	help         help.Model
 }
@@ -31,7 +31,7 @@ func newModel() model {
 		tickInterval: millisBetweenTicks * time.Millisecond,
 		started:      false,
 		help:         help.New(),
-		config:       presetConfig[0],
+		mode:         modeConfig[0],
 	}
 }
 
@@ -45,7 +45,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tickMsg:
 		if m.started {
 			m.flock.release()
-			m.flock.move(m.config)
+			m.flock.move(m.mode)
 			return m, tick(m.tickInterval)
 		}
 	case tea.KeyMsg:
@@ -57,25 +57,25 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 			return m, tick(m.tickInterval)
 		case key.Matches(msg, keys.CohesionUp):
-			m.setCustomConfig(min(m.config.Cohesion+0.01, 0.2), m.config.Separation, m.config.Alignment)
+			m.setCustomMode(min(m.mode.Cohesion+0.01, 0.2), m.mode.Separation, m.mode.Alignment)
 		case key.Matches(msg, keys.CohesionDn):
-			m.setCustomConfig(max(m.config.Cohesion-0.01, 0.0), m.config.Separation, m.config.Alignment)
+			m.setCustomMode(max(m.mode.Cohesion-0.01, 0.0), m.mode.Separation, m.mode.Alignment)
 		case key.Matches(msg, keys.SeparationUp):
-			m.setCustomConfig(m.config.Cohesion, min(m.config.Separation+0.01, 0.2), m.config.Alignment)
+			m.setCustomMode(m.mode.Cohesion, min(m.mode.Separation+0.01, 0.2), m.mode.Alignment)
 		case key.Matches(msg, keys.SeparationDn):
-			m.setCustomConfig(m.config.Cohesion, max(m.config.Separation-0.01, 0.0), m.config.Alignment)
+			m.setCustomMode(m.mode.Cohesion, max(m.mode.Separation-0.01, 0.0), m.mode.Alignment)
 		case key.Matches(msg, keys.AlignmentUp):
-			m.setCustomConfig(m.config.Cohesion, m.config.Separation, min(m.config.Alignment+0.01, 0.2))
+			m.setCustomMode(m.mode.Cohesion, m.mode.Separation, min(m.mode.Alignment+0.01, 0.2))
 		case key.Matches(msg, keys.AlignmentDn):
-			m.setCustomConfig(m.config.Cohesion, m.config.Separation, max(m.config.Alignment-0.01, 0.0))
+			m.setCustomMode(m.mode.Cohesion, m.mode.Separation, max(m.mode.Alignment-0.01, 0.0))
 		case key.Matches(msg, keys.Calm):
-			m.applyPreset(Calm)
+			m.mode = Calm.GetConfig()
 		case key.Matches(msg, keys.Chaotic):
-			m.applyPreset(Chaotic)
+			m.mode = Chaotic.GetConfig()
 		case key.Matches(msg, keys.Swarm):
-			m.applyPreset(Swarm)
+			m.mode = Swarm.GetConfig()
 		case key.Matches(msg, keys.Cluster):
-			m.applyPreset(Cluster)
+			m.mode = Cluster.GetConfig()
 		case key.Matches(msg, keys.Quit):
 			return m, tea.Quit
 		}
@@ -97,31 +97,27 @@ func max(a, b float64) float64 {
 	return b
 }
 
-func (m *model) setCustomConfig(cohesion, separation, alignment float64) {
-	config := FlockConfig{
+func (m *model) setCustomMode(cohesion, separation, alignment float64) {
+	mode := ModeConfig{
 		Name:       Custom,
 		Cohesion:   cohesion,
 		Separation: separation,
 		Alignment:  alignment,
 	}
 
-	m.config = config
-}
-
-func (m *model) applyPreset(preset Preset) {
-	m.config = preset.GetConfig()
+	m.mode = mode
 }
 
 func (m model) View() string {
 	return lipgloss.JoinVertical(
 		lipgloss.Left,
-		sliderStyle.Render(getSliders(m.config)),
-		borderStyle.Render(getBirds(m.flock.birds, m.config.Name)),
+		renderSliders(m.mode),
+		renderBirds(m.flock.birds, m.mode.Name),
 		helpStyle.Render(m.help.View(keys)),
 	)
 }
 
-func getBirds(birds []*bird, preset Preset) string {
+func renderBirds(birds []*bird, mode Mode) string {
 	grid := make([][]string, height)
 	for i := range grid {
 		grid[i] = make([]string, width)
@@ -138,7 +134,7 @@ func getBirds(birds []*bird, preset Preset) string {
 				if bird.colorIdx < 0 {
 					color = defaultBirdColor
 				} else {
-					color = getBirdGradient(preset)[bird.colorIdx]
+					color = gradients[mode][bird.colorIdx]
 				}
 				style := lipgloss.NewStyle().Foreground(color)
 				grid[y][x] = style.Render(string(letter.char))
@@ -153,19 +149,20 @@ func getBirds(birds []*bird, preset Preset) string {
 		}
 		output += "\n"
 	}
-	return output
+	return borderStyle.Render(output)
 }
 
-func getSliders(config FlockConfig) string {
-	return lipgloss.JoinVertical(lipgloss.Left,
+func renderSliders(config ModeConfig) string {
+	sliders := lipgloss.JoinVertical(lipgloss.Left,
 		fmt.Sprintf("Mode: %s", config.Name.String()),
-		slider("Cohesion", config.Cohesion, 0.0, 0.2, 20),
-		slider("Separation", config.Separation, 0.0, 0.2, 20),
-		slider("Alignment", config.Alignment, 0.0, 0.2, 20),
+		getSlider("Cohesion", config.Cohesion, 0.0, 0.2, 20),
+		getSlider("Separation", config.Separation, 0.0, 0.2, 20),
+		getSlider("Alignment", config.Alignment, 0.0, 0.2, 20),
 	)
+	return sliderStyle.Render(sliders)
 }
 
-func slider(label string, value, min, max float64, width int) string {
+func getSlider(label string, value, min, max float64, width int) string {
 	pos := int((value - min) / (max - min) * float64(width-2))
 	if pos < 0 {
 		pos = 0

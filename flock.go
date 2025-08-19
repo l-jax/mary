@@ -34,7 +34,7 @@ func newFlock() flock {
 	}
 }
 
-func (f *flock) move(config FlockConfig) {
+func (f *flock) move(config ModeConfig) {
 	for _, bird := range f.birds {
 		bird.turn(f.birds, config)
 		bird.move()

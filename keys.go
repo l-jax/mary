@@ -62,18 +62,18 @@ var keys = keyMap{
 	),
 	Calm: key.NewBinding(
 		key.WithKeys("1"),
-		key.WithHelp("1", "calm"),
+		key.WithHelp("1", Calm.String()),
 	),
 	Chaotic: key.NewBinding(
 		key.WithKeys("2"),
-		key.WithHelp("2", "chaotic"),
+		key.WithHelp("2", Chaotic.String()),
 	),
 	Swarm: key.NewBinding(
 		key.WithKeys("3"),
-		key.WithHelp("3", "swarm"),
+		key.WithHelp("3", Swarm.String()),
 	),
 	Cluster: key.NewBinding(
 		key.WithKeys("4"),
-		key.WithHelp("4", "cluster"),
+		key.WithHelp("4", Cluster.String()),
 	),
 }
