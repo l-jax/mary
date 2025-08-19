@@ -133,7 +133,7 @@ func getBirds(birds []*bird) string {
 	for _, bird := range birds {
 		for _, letter := range bird.letters {
 			x, y := int(letter.position.x), int(letter.position.y)
-			if x < width && y < height {
+			if x >= 0 && x < width && y >= 0 && y < height {
 				style := lipgloss.NewStyle().Foreground(bird.color)
 				grid[y][x] = style.Render(string(letter.char))
 			}

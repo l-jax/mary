@@ -15,9 +15,9 @@ const (
 BIRDS
 */
 const (
-	near     = 10
-	tooClose = 3.0
-	maxSpeed = 1.0
+	near     = 8
+	tooClose = 4.0
+	maxSpeed = 0.7
 )
 
 /*
