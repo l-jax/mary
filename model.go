@@ -130,10 +130,8 @@ func renderBirds(birds []*bird, mode Mode) string {
 		for _, letter := range bird.letters {
 			x, y := int(letter.position.x), int(letter.position.y)
 			if x >= 0 && x < width && y >= 0 && y < height {
-				var color lipgloss.Color
-				if bird.colorIdx < 0 {
-					color = defaultBirdColor
-				} else {
+				color := defaultBirdColor
+				if bird.colorIdx >= 0 {
 					color = gradients[mode][bird.colorIdx]
 				}
 				style := lipgloss.NewStyle().Foreground(color)

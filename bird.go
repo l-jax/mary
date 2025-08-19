@@ -133,10 +133,6 @@ func (b *bird) alignment(others []*bird, alignment float64) {
 		}
 	}
 
-	if count == 0 {
-		return
-	}
-
 	sum.divide(float64(count))
 	difference := b.velocity.difference(sum)
 	difference.multiply(alignment)
