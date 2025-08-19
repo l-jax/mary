@@ -51,8 +51,8 @@ func (f *flock) release() {
 		return
 	}
 
-	color := birdColors[rand.Intn(len(birdColors))]
-	f.birds[f.next].release(color)
+	colorIdx := rand.Intn(4)
+	f.birds[f.next].release(colorIdx)
 	f.next++
 	f.ticksSinceLastRelease = 0
 }

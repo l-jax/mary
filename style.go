@@ -3,43 +3,66 @@ package main
 import "github.com/charmbracelet/lipgloss"
 
 /*
-	COLORS
+   COLORS
 */
 
-// palette
+// Gradients for each mode (arrays from dark to light)
 var (
-	navy     = lipgloss.Color("#03396c")
-	deepBlue = lipgloss.Color("#005b96")
-	blue     = lipgloss.Color("#6497b1")
-	softBlue = lipgloss.Color("#b3cde0")
-	lavender = lipgloss.Color("#cdb4db")
-	pink     = lipgloss.Color("#ffc8dd")
-	rose     = lipgloss.Color("#ffafcc")
-	sky      = lipgloss.Color("#a2d2ff")
-	mint     = lipgloss.Color("#b5ead7")
-	blush    = lipgloss.Color("#f7cac9")
+	gradientCalm = []lipgloss.Color{
+		lipgloss.Color("#264653"), // deep blue
+		lipgloss.Color("#2978b5"),
+		lipgloss.Color("#a8dadc"),
+		lipgloss.Color("#f1faee"), // very light blue
+	}
+	gradientChaotic = []lipgloss.Color{
+		lipgloss.Color("#e76f51"), // deep orange/red
+		lipgloss.Color("#f4a261"),
+		lipgloss.Color("#ffd6ba"),
+		lipgloss.Color("#fff3e2"), // pale orange
+	}
+	gradientSwarm = []lipgloss.Color{
+		lipgloss.Color("#264653"),
+		lipgloss.Color("#2978b5"),
+		lipgloss.Color("#88B04B"), // green accent for energy
+		lipgloss.Color("#a8dadc"),
+	}
+	gradientCluster = []lipgloss.Color{
+		lipgloss.Color("#264653"),
+		lipgloss.Color("#6b8f71"), // muted green
+		lipgloss.Color("#bfc8ad"), // stone grey-green
+		lipgloss.Color("#f1faee"),
+	}
+	gradientCustom = []lipgloss.Color{
+		lipgloss.Color("#b0b0b0"),
+		lipgloss.Color("#d9cab3"),
+		lipgloss.Color("#eaeaea"),
+		lipgloss.Color("#f5f3f0"),
+	}
 )
 
-var birdColors = []lipgloss.Color{
-	softBlue,
-	blue,
-	deepBlue,
-	navy,
-	lavender,
-	pink,
-	rose,
-	sky,
-	mint,
-	blush,
+func getBirdGradient(preset Preset) []lipgloss.Color {
+	switch preset {
+	case Calm:
+		return gradientCalm
+	case Chaotic:
+		return gradientChaotic
+	case Swarm:
+		return gradientSwarm
+	case Cluster:
+		return gradientCluster
+	default:
+		return gradientCustom
+	}
 }
 
 var (
-	borderColor = deepBlue
-	helpColor   = softBlue
+	defaultBirdColor = lipgloss.Color("#b0b0b0")
+	borderColor      = lipgloss.Color("#b0b0b0")
+	helpColor        = lipgloss.Color("#b0b0b0")
 )
 
 /*
-	STYLES
+   STYLES
 */
 
 var (

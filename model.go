@@ -116,12 +116,12 @@ func (m model) View() string {
 	return lipgloss.JoinVertical(
 		lipgloss.Left,
 		sliderStyle.Render(getSliders(m.config)),
-		borderStyle.Render(getBirds(m.flock.birds)),
+		borderStyle.Render(getBirds(m.flock.birds, m.config.Name)),
 		helpStyle.Render(m.help.View(keys)),
 	)
 }
 
-func getBirds(birds []*bird) string {
+func getBirds(birds []*bird, preset Preset) string {
 	grid := make([][]string, height)
 	for i := range grid {
 		grid[i] = make([]string, width)
@@ -134,7 +134,13 @@ func getBirds(birds []*bird) string {
 		for _, letter := range bird.letters {
 			x, y := int(letter.position.x), int(letter.position.y)
 			if x >= 0 && x < width && y >= 0 && y < height {
-				style := lipgloss.NewStyle().Foreground(bird.color)
+				var color lipgloss.Color
+				if bird.colorIdx < 0 {
+					color = defaultBirdColor
+				} else {
+					color = getBirdGradient(preset)[bird.colorIdx]
+				}
+				style := lipgloss.NewStyle().Foreground(color)
 				grid[y][x] = style.Render(string(letter.char))
 			}
 		}

@@ -2,8 +2,6 @@ package main
 
 import (
 	"math/rand/v2"
-
-	"github.com/charmbracelet/lipgloss"
 )
 
 type letter struct {
@@ -17,7 +15,7 @@ type bird struct {
 	position vector
 	velocity vector
 	released bool
-	color    lipgloss.Color
+	colorIdx int
 }
 
 func newBird(word string, position vector) *bird {
@@ -33,15 +31,15 @@ func newBird(word string, position vector) *bird {
 		letters:  letters,
 		position: position,
 		velocity: vector{y: 0, x: 0},
-		color:    softBlue,
+		colorIdx: -1,
 	}
 }
 
-func (b *bird) release(color lipgloss.Color) {
+func (b *bird) release(colorIdx int) {
 	if b.released || len(b.letters) == 0 {
 		return
 	}
-	b.color = color
+	b.colorIdx = colorIdx
 	b.released = true
 	b.velocity = vector{
 		y: (rand.Float64() - 1) * 2,
